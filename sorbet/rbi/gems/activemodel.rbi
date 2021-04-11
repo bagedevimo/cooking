@@ -326,6 +326,25 @@ end
 module ActiveModel::AttributeMethods::AttrNames
   def self.define_attribute_accessor_method(owner, attr_name, writer: nil); end
 end
+class ActiveModel::Validator
+  def initialize(options = nil); end
+  def kind; end
+  def options; end
+  def self.kind; end
+  def validate(record); end
+end
+class ActiveModel::EachValidator < ActiveModel::Validator
+  def attributes; end
+  def check_validity!; end
+  def initialize(options); end
+  def prepare_value_for_validation(value, record, attr_name); end
+  def validate(record); end
+  def validate_each(record, attribute, value); end
+end
+class ActiveModel::BlockValidator < ActiveModel::EachValidator
+  def initialize(options, &block); end
+  def validate_each(record, attribute, value); end
+end
 module ActiveModel::SecurePassword
   def self.min_cost; end
   def self.min_cost=(arg0); end
@@ -636,25 +655,6 @@ module ActiveModel::Validations::Clusivity
   def delimiter; end
   def include?(record, value); end
   def inclusion_method(enumerable); end
-end
-class ActiveModel::Validator
-  def initialize(options = nil); end
-  def kind; end
-  def options; end
-  def self.kind; end
-  def validate(record); end
-end
-class ActiveModel::EachValidator < ActiveModel::Validator
-  def attributes; end
-  def check_validity!; end
-  def initialize(options); end
-  def prepare_value_for_validation(value, record, attr_name); end
-  def validate(record); end
-  def validate_each(record, attribute, value); end
-end
-class ActiveModel::BlockValidator < ActiveModel::EachValidator
-  def initialize(options, &block); end
-  def validate_each(record, attribute, value); end
 end
 class ActiveModel::Validations::InclusionValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value); end

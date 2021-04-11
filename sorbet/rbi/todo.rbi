@@ -2,7 +2,13 @@
 #   srb rbi todo
 
 # typed: strong
-module ::Anonymous_Delegator_29; end
+module ::Anonymous_Delegator_28; end
 module ::Anonymous_Delegator_8; end
 module ActionDispatch::Response::ContentTypeHeader; end
+module ActiveRecord::Delegation::DelegateCache; end
+module ClearanceMailer::Anonymous_Module_36; end
 module Rails::Application::Configuration; end
+module T::InterfaceWrapper::Helpers; end
+module T::Private::Abstract::Hooks; end
+module T::Private::Methods::MethodHooks; end
+module T::Private::Methods::SingletonMethodHooks; end

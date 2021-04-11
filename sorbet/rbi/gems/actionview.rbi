@@ -1350,7 +1350,7 @@ class ActionView::TestCase::TestController < ActionController::Base
   def self.middleware_stack; end
   include ActionDispatch::Routing::UrlFor
   include ActionDispatch::TestProcess
-  include Anonymous_Module_22
+  include GeneratedUrlHelpers
 end
 module ActionView::TestCase::TestController::HelperMethods
   include ActionController::Base::HelperMethods

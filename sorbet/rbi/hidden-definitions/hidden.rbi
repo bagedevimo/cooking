@@ -1418,6 +1418,8 @@ class ActionController::API
   include ::ActionController::Helpers
   include ::ActionController::ImplicitRender
   include ::ActionController::BasicImplicitRender
+  include ::Sentry::Rails::ControllerMethods
+  include ::Sentry::Rails::ControllerTransaction
   def __callbacks(); end
 
   def __callbacks?(); end
@@ -1636,6 +1638,8 @@ class ActionController::Base
   include ::ActionController::ParamsWrapper
   include ::ActionDispatch::Routing::RouteSet::MountedHelpers
   include ::ActiveRecord::Railties::ControllerRuntime
+  include ::Sentry::Rails::ControllerMethods
+  include ::Sentry::Rails::ControllerTransaction
   def __callbacks(); end
 
   def __callbacks?(); end
@@ -2316,6 +2320,7 @@ class ActionController::InvalidCrossOriginRequest
 end
 
 module ActionController::Live
+  include ::Sentry::Rails::Overrides::StreamingReporter
   def new_controller_thread(); end
 
   def process(name); end
@@ -3618,6 +3623,7 @@ class ActionDispatch::Executor
 end
 
 class ActionDispatch::FileHandler
+  include ::Sentry::Rails::Overrides::FileHandler
   def attempt(env); end
 
   def call(env); end
@@ -6077,7 +6083,15 @@ end
 module ActionDispatch::Routing::RouteSet::MountedHelpers
   def _main_app(); end
 
+  def _rswag_api(); end
+
+  def _rswag_ui(); end
+
   def main_app(); end
+
+  def rswag_api(); end
+
+  def rswag_ui(); end
 end
 
 module ActionDispatch::Routing::RouteSet::MountedHelpers
@@ -9990,6 +10004,7 @@ class ActionView::StreamingTemplateRenderer
 end
 
 class ActionView::StreamingTemplateRenderer::Body
+  include ::Sentry::Rails::Overrides::StreamingReporter
   def each(&block); end
 
   def initialize(&start); end
@@ -10585,6 +10600,7 @@ class ActiveJob::Base
   include ::ActiveJob::Instrumentation
   include ::ActiveJob::Timezones
   include ::ActiveJob::Translation
+  include ::Sentry::Rails::ActiveJobExtensions
   include ::ActiveJob::TestHelper::TestQueueAdapter
   def __callbacks(); end
 
@@ -22110,6 +22126,7 @@ class ActiveSupport::Notifications::InstrumentationRegistry
 end
 
 class ActiveSupport::Notifications::Instrumenter
+  include ::Sentry::Rails::Tracing::SentryNotificationExtension
   def finish(name, payload); end
 
   def finish_with_state(listeners_state, name, payload); end
@@ -22117,8 +22134,6 @@ class ActiveSupport::Notifications::Instrumenter
   def id(); end
 
   def initialize(notifier); end
-
-  def instrument(name, payload=T.unsafe(nil)); end
 
   def start(name, payload); end
 end
@@ -25740,6 +25755,10 @@ module Bundler::FileUtils
 end
 
 class Bundler::GemHelper
+  include ::Rake::DSL
+  include ::Rake::FileUtilsExt
+  include ::FileUtils
+  include ::FileUtils::StreamUtils_
   def allowed_push_host(); end
 
   def already_tagged?(); end
@@ -27996,6 +28015,17 @@ end
 module Clearance::PasswordStrategies::Argon2
 end
 
+class CompositeReadIO
+  def initialize(*ios); end
+
+  def read(length=T.unsafe(nil), outbuf=T.unsafe(nil)); end
+
+  def rewind(); end
+end
+
+class CompositeReadIO
+end
+
 module Concurrent
   NULL = ::T.let(nil, ::T.untyped)
   NULL_LOGGER = ::T.let(nil, ::T.untyped)
@@ -29417,6 +29447,1193 @@ class FalseClass
   include ::JSON::Ext::Generator::GeneratorMethods::FalseClass
 end
 
+module Faraday
+  METHODS_WITH_BODY = ::T.let(nil, ::T.untyped)
+  METHODS_WITH_QUERY = ::T.let(nil, ::T.untyped)
+  VERSION = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Adapter
+  def call(env); end
+
+  def close(); end
+
+  def connection(env); end
+
+  def initialize(_app=T.unsafe(nil), opts=T.unsafe(nil), &block); end
+  CONTENT_LENGTH = ::T.let(nil, ::T.untyped)
+  TIMEOUT_KEYS = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Adapter::EMHttp
+  include ::Faraday::Adapter::EMHttp::Options
+  def create_request(env); end
+
+  def error_message(client); end
+
+  def parallel?(env); end
+
+  def perform_request(env); end
+
+  def perform_single_request(env); end
+
+  def raise_error(msg); end
+
+  def timeout_message?(msg); end
+end
+
+class Faraday::Adapter::EMHttp::Manager
+  def add(&block); end
+
+  def check_finished(); end
+
+  def perform_request(); end
+
+  def reset(); end
+
+  def run(); end
+
+  def running?(); end
+end
+
+class Faraday::Adapter::EMHttp::Manager
+end
+
+module Faraday::Adapter::EMHttp::Options
+  def configure_compression(options, env); end
+
+  def configure_proxy(options, env); end
+
+  def configure_socket(options, env); end
+
+  def configure_ssl(options, env); end
+
+  def configure_timeout(options, env); end
+
+  def connection_config(env); end
+
+  def read_body(env); end
+
+  def request_config(env); end
+
+  def request_options(env); end
+end
+
+module Faraday::Adapter::EMHttp::Options
+end
+
+class Faraday::Adapter::EMHttp
+  def self.setup_parallel_manager(_options=T.unsafe(nil)); end
+end
+
+class Faraday::Adapter::EMSynchrony
+  include ::Faraday::Adapter::EMHttp::Options
+  def create_request(env); end
+end
+
+class Faraday::Adapter::EMSynchrony
+  def self.setup_parallel_manager(_options=T.unsafe(nil)); end
+end
+
+class Faraday::Adapter::Excon
+  def build_connection(env); end
+
+  def read_body(env); end
+  OPTS_KEYS = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Adapter::Excon
+end
+
+class Faraday::Adapter::HTTPClient
+  def build_connection(env); end
+
+  def configure_client(client); end
+
+  def configure_proxy(client, proxy); end
+
+  def configure_socket(client, bind); end
+
+  def configure_ssl(client, ssl); end
+
+  def configure_timeouts(client, req); end
+
+  def ssl_cert_store(ssl); end
+
+  def ssl_verify_mode(ssl); end
+end
+
+class Faraday::Adapter::HTTPClient
+end
+
+class Faraday::Adapter::NetHttp
+  def build_connection(env); end
+
+  def initialize(app=T.unsafe(nil), opts=T.unsafe(nil), &block); end
+
+  def net_http_connection(env); end
+  NET_HTTP_EXCEPTIONS = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Adapter::NetHttp
+end
+
+class Faraday::Adapter::NetHttpPersistent
+  SSL_CONFIGURATIONS = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Adapter::NetHttpPersistent
+end
+
+module Faraday::Adapter::Parallelism
+  def inherited(subclass); end
+
+  def supports_parallel=(supports_parallel); end
+
+  def supports_parallel?(); end
+end
+
+module Faraday::Adapter::Parallelism
+end
+
+class Faraday::Adapter::Patron
+  def build_connection(env); end
+
+  def configure_proxy(session, proxy); end
+
+  def configure_ssl(session, ssl); end
+
+  def configure_timeouts(session, req); end
+  CURL_TIMEOUT_MESSAGES = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Adapter::Patron
+end
+
+class Faraday::Adapter::Rack
+  def initialize(faraday_app, rack_app); end
+  SPECIAL_HEADERS = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Adapter::Rack
+end
+
+class Faraday::Adapter::Test
+  def configure(); end
+
+  def initialize(app, stubs=T.unsafe(nil), &block); end
+
+  def stubs(); end
+
+  def stubs=(stubs); end
+end
+
+class Faraday::Adapter::Test::Stub
+  def headers_match?(request_headers); end
+
+  def initialize(host, full, headers, body, block); end
+
+  def matches?(request_host, request_uri, request_headers, request_body); end
+
+  def params_match?(request_params); end
+
+  def path_match?(request_path, meta); end
+end
+
+class Faraday::Adapter::Test::Stub
+end
+
+class Faraday::Adapter::Test::Stubs
+  def delete(path, headers=T.unsafe(nil), &block); end
+
+  def empty?(); end
+
+  def get(path, headers=T.unsafe(nil), &block); end
+
+  def head(path, headers=T.unsafe(nil), &block); end
+
+  def match(request_method, host, path, headers, body); end
+
+  def matches?(stack, host, path, headers, body); end
+
+  def new_stub(request_method, path, headers=T.unsafe(nil), body=T.unsafe(nil), &block); end
+
+  def options(path, headers=T.unsafe(nil), &block); end
+
+  def patch(path, body=T.unsafe(nil), headers=T.unsafe(nil), &block); end
+
+  def post(path, body=T.unsafe(nil), headers=T.unsafe(nil), &block); end
+
+  def put(path, body=T.unsafe(nil), headers=T.unsafe(nil), &block); end
+
+  def verify_stubbed_calls(); end
+end
+
+class Faraday::Adapter::Test::Stubs::NotFound
+end
+
+class Faraday::Adapter::Test::Stubs::NotFound
+end
+
+class Faraday::Adapter::Test::Stubs
+end
+
+class Faraday::Adapter::Test
+end
+
+class Faraday::Adapter::Typhoeus
+  def call(); end
+end
+
+class Faraday::Adapter::Typhoeus
+end
+
+class Faraday::Adapter
+  extend ::Faraday::MiddlewareRegistry
+  extend ::Faraday::DependencyLoader
+  extend ::Faraday::Adapter::Parallelism
+  extend ::Faraday::AutoloadHelper
+end
+
+class Faraday::AdapterRegistry
+  def get(name); end
+
+  def set(klass, name=T.unsafe(nil)); end
+end
+
+class Faraday::AdapterRegistry
+end
+
+module Faraday::AutoloadHelper
+  def all_loaded_constants(); end
+
+  def autoload_all(prefix, options); end
+
+  def load_autoloaded_constants(); end
+end
+
+module Faraday::AutoloadHelper
+end
+
+class Faraday::BadRequestError
+end
+
+class Faraday::BadRequestError
+end
+
+class Faraday::ClientError
+end
+
+class Faraday::ClientError
+end
+
+class Faraday::CompositeReadIO
+  def close(); end
+
+  def ensure_open_and_readable(); end
+
+  def initialize(*parts); end
+
+  def length(); end
+
+  def read(length=T.unsafe(nil), outbuf=T.unsafe(nil)); end
+
+  def rewind(); end
+end
+
+class Faraday::CompositeReadIO
+end
+
+class Faraday::ConflictError
+end
+
+class Faraday::ConflictError
+end
+
+class Faraday::Connection
+  def adapter(*args, &block); end
+
+  def app(*args, &block); end
+
+  def authorization(type, token); end
+
+  def basic_auth(login, pass); end
+
+  def build(*args, &block); end
+
+  def build_exclusive_url(url=T.unsafe(nil), params=T.unsafe(nil), params_encoder=T.unsafe(nil)); end
+
+  def build_request(method); end
+
+  def build_url(url=T.unsafe(nil), extra_params=T.unsafe(nil)); end
+
+  def builder(); end
+
+  def close(); end
+
+  def default_parallel_manager(); end
+
+  def default_parallel_manager=(default_parallel_manager); end
+
+  def delete(url=T.unsafe(nil), params=T.unsafe(nil), headers=T.unsafe(nil)); end
+
+  def find_default_proxy(); end
+
+  def get(url=T.unsafe(nil), params=T.unsafe(nil), headers=T.unsafe(nil)); end
+
+  def head(url=T.unsafe(nil), params=T.unsafe(nil), headers=T.unsafe(nil)); end
+
+  def headers(); end
+
+  def headers=(hash); end
+
+  def host(*args, &block); end
+
+  def host=(*args, &block); end
+
+  def in_parallel(manager=T.unsafe(nil)); end
+
+  def in_parallel?(); end
+
+  def initialize(url=T.unsafe(nil), options=T.unsafe(nil)); end
+
+  def initialize_proxy(url, options); end
+
+  def options(*args); end
+
+  def parallel_manager(); end
+
+  def params(); end
+
+  def params=(hash); end
+
+  def patch(url=T.unsafe(nil), body=T.unsafe(nil), headers=T.unsafe(nil), &block); end
+
+  def path_prefix(*args, &block); end
+
+  def path_prefix=(value); end
+
+  def port(*args, &block); end
+
+  def port=(*args, &block); end
+
+  def post(url=T.unsafe(nil), body=T.unsafe(nil), headers=T.unsafe(nil), &block); end
+
+  def proxy(); end
+
+  def proxy=(new_value); end
+
+  def proxy_for_request(url); end
+
+  def proxy_from_env(url); end
+
+  def put(url=T.unsafe(nil), body=T.unsafe(nil), headers=T.unsafe(nil), &block); end
+
+  def request(*args, &block); end
+
+  def response(*args, &block); end
+
+  def run_request(method, url, body, headers); end
+
+  def scheme(*args, &block); end
+
+  def scheme=(*args, &block); end
+
+  def set_authorization_header(header_type, *args); end
+
+  def ssl(); end
+
+  def support_parallel?(adapter); end
+
+  def token_auth(token, options=T.unsafe(nil)); end
+
+  def trace(url=T.unsafe(nil), params=T.unsafe(nil), headers=T.unsafe(nil)); end
+
+  def url_prefix(); end
+
+  def url_prefix=(url, encoder=T.unsafe(nil)); end
+
+  def use(*args, &block); end
+
+  def with_uri_credentials(uri); end
+  METHODS = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Connection
+  extend ::Forwardable
+end
+
+class Faraday::ConnectionFailed
+end
+
+class Faraday::ConnectionFailed
+end
+
+class Faraday::ConnectionOptions
+  def new_builder(block); end
+end
+
+class Faraday::ConnectionOptions
+end
+
+module Faraday::DecodeMethods
+  def add_to_context(is_array, context, value, subkey); end
+
+  def decode(query); end
+
+  def decode_pair(key, value, context); end
+
+  def dehash(hash, depth); end
+
+  def match_context(context, subkey); end
+
+  def new_context(subkey, is_array, context); end
+
+  def prepare_context(context, subkey, is_array, last_subkey); end
+  SUBKEYS_REGEX = ::T.let(nil, ::T.untyped)
+end
+
+module Faraday::DecodeMethods
+end
+
+module Faraday::DependencyLoader
+  def dependency(lib=T.unsafe(nil)); end
+
+  def inherited(subclass); end
+
+  def load_error(); end
+
+  def loaded?(); end
+
+  def new(*_); end
+end
+
+module Faraday::DependencyLoader
+end
+
+module Faraday::EncodeMethods
+  def encode(params); end
+
+  def encode_array(parent, value); end
+
+  def encode_hash(parent, value); end
+
+  def encode_pair(parent, value); end
+end
+
+module Faraday::EncodeMethods
+end
+
+class Faraday::Env
+  def []=(key, value); end
+
+  def body(); end
+
+  def body=(value); end
+
+  def clear_body(); end
+
+  def current_body(); end
+
+  def custom_members(); end
+
+  def in_member_set?(key); end
+
+  def needs_body?(); end
+
+  def parallel?(); end
+
+  def params_encoder(*args, &block); end
+
+  def parse_body?(); end
+
+  def success?(); end
+  ContentLength = ::T.let(nil, ::T.untyped)
+  MethodsWithBodies = ::T.let(nil, ::T.untyped)
+  StatusesWithoutBody = ::T.let(nil, ::T.untyped)
+  SuccessfulStatuses = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Env
+  extend ::Forwardable
+  def self.member_set(); end
+end
+
+class Faraday::Error
+  def exc_msg_and_response(exc, response=T.unsafe(nil)); end
+
+  def exc_msg_and_response!(exc, response=T.unsafe(nil)); end
+
+  def initialize(exc, response=T.unsafe(nil)); end
+
+  def response(); end
+
+  def response_body(); end
+
+  def response_headers(); end
+
+  def response_status(); end
+
+  def wrapped_exception(); end
+end
+
+class Faraday::Error
+end
+
+Faraday::FilePart = UploadIO
+
+module Faraday::FlatParamsEncoder
+end
+
+module Faraday::FlatParamsEncoder
+  def self.decode(query); end
+
+  def self.encode(params); end
+
+  def self.escape(*args, &block); end
+
+  def self.sort_params(); end
+
+  def self.sort_params=(sort_params); end
+
+  def self.unescape(*args, &block); end
+end
+
+class Faraday::ForbiddenError
+end
+
+class Faraday::ForbiddenError
+end
+
+class Faraday::Middleware
+  def app(); end
+
+  def call(env); end
+
+  def close(); end
+
+  def initialize(app=T.unsafe(nil), options=T.unsafe(nil)); end
+
+  def options(); end
+end
+
+class Faraday::Middleware
+  extend ::Faraday::MiddlewareRegistry
+  extend ::Faraday::DependencyLoader
+end
+
+module Faraday::MiddlewareRegistry
+  def fetch_middleware(key); end
+
+  def load_middleware(key); end
+
+  def lookup_middleware(key); end
+
+  def middleware_mutex(&block); end
+
+  def register_middleware(autoload_path=T.unsafe(nil), mapping=T.unsafe(nil)); end
+
+  def unregister_middleware(key); end
+end
+
+module Faraday::MiddlewareRegistry
+end
+
+module Faraday::NestedParamsEncoder
+end
+
+module Faraday::NestedParamsEncoder
+  extend ::Faraday::EncodeMethods
+  extend ::Faraday::DecodeMethods
+  def self.escape(*args, &block); end
+
+  def self.sort_params(); end
+
+  def self.sort_params=(sort_params); end
+
+  def self.unescape(*args, &block); end
+end
+
+module Faraday::NetHttp
+  VERSION = ::T.let(nil, ::T.untyped)
+end
+
+module Faraday::NetHttp
+end
+
+class Faraday::NilStatusError
+end
+
+class Faraday::NilStatusError
+end
+
+class Faraday::Options
+  def [](key); end
+
+  def clear(); end
+
+  def delete(key); end
+
+  def each_key(&block); end
+
+  def each_value(&block); end
+
+  def empty?(); end
+
+  def fetch(key, *args); end
+
+  def has_key?(key); end
+
+  def has_value?(value); end
+
+  def key?(key); end
+
+  def keys(); end
+
+  def merge(other); end
+
+  def merge!(other); end
+
+  def symbolized_key_set(); end
+
+  def to_hash(); end
+
+  def update(obj); end
+
+  def value?(value); end
+
+  def values_at(*keys); end
+end
+
+class Faraday::Options
+  def self.attribute_options(); end
+
+  def self.fetch_error_class(); end
+
+  def self.from(value); end
+
+  def self.inherited(subclass); end
+
+  def self.memoized(key, &block); end
+
+  def self.memoized_attributes(); end
+
+  def self.options(mapping); end
+
+  def self.options_for(key); end
+end
+
+class Faraday::ParamPart
+  def content_id(); end
+
+  def content_type(); end
+
+  def headers(); end
+
+  def initialize(value, content_type, content_id=T.unsafe(nil)); end
+
+  def to_part(boundary, key); end
+
+  def value(); end
+end
+
+class Faraday::ParamPart
+end
+
+class Faraday::ParsingError
+end
+
+class Faraday::ParsingError
+end
+
+Faraday::Parts = Parts
+
+class Faraday::ProxyAuthError
+end
+
+class Faraday::ProxyAuthError
+end
+
+class Faraday::ProxyOptions
+  def host(*args, &block); end
+
+  def host=(*args, &block); end
+
+  def path(*args, &block); end
+
+  def path=(*args, &block); end
+
+  def port(*args, &block); end
+
+  def port=(*args, &block); end
+
+  def scheme(*args, &block); end
+
+  def scheme=(*args, &block); end
+end
+
+class Faraday::ProxyOptions
+  extend ::Forwardable
+end
+
+class Faraday::RackBuilder
+  def ==(other); end
+
+  def [](idx); end
+
+  def adapter(klass=T.unsafe(nil), *args, &block); end
+
+  def app(); end
+
+  def build(options=T.unsafe(nil)); end
+
+  def build_env(connection, request); end
+
+  def build_response(connection, request); end
+
+  def delete(handler); end
+
+  def handlers(); end
+
+  def handlers=(handlers); end
+
+  def initialize(handlers=T.unsafe(nil), adapter=T.unsafe(nil), &block); end
+
+  def insert(index, *args, &block); end
+
+  def insert_after(index, *args, &block); end
+
+  def insert_before(index, *args, &block); end
+
+  def lock!(); end
+
+  def locked?(); end
+
+  def request(key, *args, &block); end
+
+  def response(key, *args, &block); end
+
+  def swap(index, *args, &block); end
+
+  def to_app(); end
+
+  def use(klass, *args, &block); end
+  LOCK_ERR = ::T.let(nil, ::T.untyped)
+  NO_ARGUMENT = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::RackBuilder::Handler
+  def ==(other); end
+
+  def build(app=T.unsafe(nil)); end
+
+  def initialize(klass, *args, &block); end
+
+  def klass(); end
+
+  def name(); end
+  REGISTRY = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::RackBuilder::Handler
+end
+
+class Faraday::RackBuilder::StackLocked
+end
+
+class Faraday::RackBuilder::StackLocked
+end
+
+class Faraday::RackBuilder
+end
+
+class Faraday::Request
+  def [](key); end
+
+  def []=(key, value); end
+
+  def headers=(hash); end
+
+  def marshal_dump(); end
+
+  def marshal_load(serialised); end
+
+  def method(); end
+
+  def params=(hash); end
+
+  def to_env(connection); end
+
+  def url(path, params=T.unsafe(nil)); end
+end
+
+class Faraday::Request::Authorization
+  def initialize(app, type, token); end
+  KEY = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Request::Authorization
+  def self.build_hash(type, hash); end
+
+  def self.header(type, token); end
+end
+
+class Faraday::Request::BasicAuthentication
+end
+
+class Faraday::Request::BasicAuthentication
+  def self.header(login, pass); end
+end
+
+class Faraday::Request::Instrumentation
+  def initialize(app, options=T.unsafe(nil)); end
+end
+
+class Faraday::Request::Instrumentation::Options
+end
+
+class Faraday::Request::Instrumentation::Options
+end
+
+class Faraday::Request::Instrumentation
+end
+
+class Faraday::Request::Multipart
+  def create_multipart(env, params); end
+
+  def has_multipart?(obj); end
+
+  def part(boundary, key, value); end
+
+  def process_params(params, prefix=T.unsafe(nil), pieces=T.unsafe(nil), &block); end
+
+  def unique_boundary(); end
+  DEFAULT_BOUNDARY_PREFIX = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Request::Multipart
+end
+
+class Faraday::Request::Retry
+  def build_exception_matcher(exceptions); end
+
+  def calculate_sleep_amount(retries, env); end
+
+  def initialize(app, options=T.unsafe(nil)); end
+  DEFAULT_EXCEPTIONS = ::T.let(nil, ::T.untyped)
+  IDEMPOTENT_METHODS = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Request::Retry::Options
+  DEFAULT_CHECK = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Request::Retry::Options
+end
+
+class Faraday::Request::Retry
+end
+
+class Faraday::Request::TokenAuthentication
+  def initialize(app, token, options=T.unsafe(nil)); end
+end
+
+class Faraday::Request::TokenAuthentication
+  def self.header(token, options=T.unsafe(nil)); end
+end
+
+class Faraday::Request::UrlEncoded
+  def match_content_type(env); end
+
+  def process_request?(env); end
+
+  def request_type(env); end
+  CONTENT_TYPE = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Request::UrlEncoded
+  def self.mime_type(); end
+
+  def self.mime_type=(mime_type); end
+end
+
+class Faraday::Request
+  extend ::Faraday::MiddlewareRegistry
+  extend ::Faraday::AutoloadHelper
+  def self.create(request_method); end
+end
+
+class Faraday::RequestOptions
+  def []=(key, value); end
+
+  def stream_response?(); end
+end
+
+class Faraday::RequestOptions
+end
+
+class Faraday::ResourceNotFound
+end
+
+class Faraday::ResourceNotFound
+end
+
+class Faraday::Response
+  def [](*args, &block); end
+
+  def apply_request(request_env); end
+
+  def body(); end
+
+  def env(); end
+
+  def finish(env); end
+
+  def finished?(); end
+
+  def headers(); end
+
+  def initialize(env=T.unsafe(nil)); end
+
+  def marshal_dump(); end
+
+  def marshal_load(env); end
+
+  def on_complete(&block); end
+
+  def reason_phrase(); end
+
+  def status(); end
+
+  def success?(); end
+
+  def to_hash(); end
+end
+
+class Faraday::Response::Logger
+  def initialize(app, logger=T.unsafe(nil), options=T.unsafe(nil)); end
+end
+
+class Faraday::Response::Logger
+end
+
+class Faraday::Response::Middleware
+  def on_complete(env); end
+end
+
+class Faraday::Response::Middleware
+end
+
+class Faraday::Response::RaiseError
+  def response_values(env); end
+  ClientErrorStatuses = ::T.let(nil, ::T.untyped)
+  ServerErrorStatuses = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Response::RaiseError
+end
+
+class Faraday::Response
+  extend ::Forwardable
+  extend ::Faraday::MiddlewareRegistry
+  extend ::Faraday::AutoloadHelper
+end
+
+class Faraday::RetriableResponse
+end
+
+class Faraday::RetriableResponse
+end
+
+class Faraday::SSLError
+end
+
+class Faraday::SSLError
+end
+
+class Faraday::SSLOptions
+  def disable?(); end
+
+  def verify?(); end
+end
+
+class Faraday::SSLOptions
+end
+
+class Faraday::ServerError
+end
+
+class Faraday::ServerError
+end
+
+class Faraday::TimeoutError
+  def initialize(exc=T.unsafe(nil), response=T.unsafe(nil)); end
+end
+
+class Faraday::TimeoutError
+end
+
+Faraday::Timer = Timeout
+
+class Faraday::UnauthorizedError
+end
+
+class Faraday::UnauthorizedError
+end
+
+class Faraday::UnprocessableEntityError
+end
+
+class Faraday::UnprocessableEntityError
+end
+
+Faraday::UploadIO = UploadIO
+
+module Faraday::Utils
+  DEFAULT_SEP = ::T.let(nil, ::T.untyped)
+  ESCAPE_RE = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Utils::Headers
+  def [](key); end
+
+  def []=(key, val); end
+
+  def delete(key); end
+
+  def fetch(key, *args, &block); end
+
+  def has_key?(key); end
+
+  def include?(key); end
+
+  def initialize(hash=T.unsafe(nil)); end
+
+  def initialize_names(); end
+
+  def key?(key); end
+
+  def member?(key); end
+
+  def merge(other); end
+
+  def merge!(other); end
+
+  def names(); end
+
+  def parse(header_string); end
+
+  def replace(other); end
+
+  def update(other); end
+  KeyMap = ::T.let(nil, ::T.untyped)
+end
+
+class Faraday::Utils::Headers
+  def self.from(value); end
+end
+
+class Faraday::Utils::ParamsHash
+  def [](key); end
+
+  def []=(key, value); end
+
+  def delete(key); end
+
+  def has_key?(key); end
+
+  def include?(key); end
+
+  def key?(key); end
+
+  def member?(key); end
+
+  def merge(params); end
+
+  def merge!(params); end
+
+  def merge_query(query, encoder=T.unsafe(nil)); end
+
+  def replace(other); end
+
+  def to_query(encoder=T.unsafe(nil)); end
+
+  def update(params); end
+end
+
+class Faraday::Utils::ParamsHash
+end
+
+module Faraday::Utils
+  def self.URI(url); end
+
+  def self.build_nested_query(params); end
+
+  def self.build_query(params); end
+
+  def self.deep_merge(source, hash); end
+
+  def self.deep_merge!(target, hash); end
+
+  def self.default_params_encoder(); end
+
+  def self.default_params_encoder=(default_params_encoder); end
+
+  def self.default_space_encoding(); end
+
+  def self.default_space_encoding=(default_space_encoding); end
+
+  def self.default_uri_parser(); end
+
+  def self.default_uri_parser=(parser); end
+
+  def self.escape(str); end
+
+  def self.normalize_path(url); end
+
+  def self.parse_nested_query(query); end
+
+  def self.parse_query(query); end
+
+  def self.sort_query_params(query); end
+
+  def self.unescape(str); end
+end
+
+module Faraday
+  def self.default_adapter(); end
+
+  def self.default_adapter=(adapter); end
+
+  def self.default_connection(); end
+
+  def self.default_connection=(default_connection); end
+
+  def self.default_connection_options(); end
+
+  def self.default_connection_options=(options); end
+
+  def self.ignore_env_proxy(); end
+
+  def self.ignore_env_proxy=(ignore_env_proxy); end
+
+  def self.lib_path(); end
+
+  def self.lib_path=(lib_path); end
+
+  def self.new(url=T.unsafe(nil), options=T.unsafe(nil), &block); end
+
+  def self.require_lib(*libs); end
+
+  def self.require_libs(*libs); end
+
+  def self.respond_to_missing?(symbol, include_private=T.unsafe(nil)); end
+
+  def self.root_path(); end
+
+  def self.root_path=(root_path); end
+end
+
 class Fiber
   def initialize(*_); end
 
@@ -29436,6 +30653,8 @@ class File
 
   def self.probe_stat_in(dir); end
 end
+
+FileList = Rake::FileList
 
 module FileUtils
   include ::FileUtils::StreamUtils_
@@ -30070,6 +31289,22 @@ Gem::Version::Requirement = Gem::Requirement
 module GeneratedUrlHelpers
   def _routes(); end
 
+  def api_v1_recipe_path(*args); end
+
+  def api_v1_recipe_url(*args); end
+
+  def api_v1_recipes_path(*args); end
+
+  def api_v1_recipes_url(*args); end
+
+  def edit_api_v1_recipe_path(*args); end
+
+  def edit_api_v1_recipe_url(*args); end
+
+  def new_api_v1_recipe_path(*args); end
+
+  def new_api_v1_recipe_url(*args); end
+
   def rails_info_path(*args); end
 
   def rails_info_properties_path(*args); end
@@ -30085,6 +31320,18 @@ module GeneratedUrlHelpers
   def rails_mailers_path(*args); end
 
   def rails_mailers_url(*args); end
+
+  def root_path(*args); end
+
+  def root_url(*args); end
+
+  def rswag_api_path(*args); end
+
+  def rswag_api_url(*args); end
+
+  def rswag_ui_path(*args); end
+
+  def rswag_ui_url(*args); end
 end
 
 module GeneratedUrlHelpers
@@ -35868,6 +37115,52 @@ class Parser::StaticEnvironment
   FORWARD_ARGS = ::T.let(nil, ::T.untyped)
 end
 
+module Parts
+end
+
+class Parts::EpiloguePart
+  include ::Parts::Part
+  def initialize(boundary); end
+end
+
+class Parts::EpiloguePart
+end
+
+class Parts::FilePart
+  include ::Parts::Part
+  def build_head(boundary, name, filename, type, content_len, opts=T.unsafe(nil)); end
+
+  def initialize(boundary, name, io, headers=T.unsafe(nil)); end
+end
+
+class Parts::FilePart
+end
+
+class Parts::ParamPart
+  include ::Parts::Part
+  def build_part(boundary, name, value, headers=T.unsafe(nil)); end
+
+  def initialize(boundary, name, value, headers=T.unsafe(nil)); end
+end
+
+class Parts::ParamPart
+end
+
+module Parts::Part
+  def length(); end
+
+  def to_io(); end
+end
+
+module Parts::Part
+  def self.file?(value); end
+
+  def self.new(boundary, name, value, headers=T.unsafe(nil)); end
+end
+
+module Parts
+end
+
 class Pathname
   def fnmatch?(*_); end
 
@@ -39003,6 +40296,29 @@ module RSpec::Core::MetadataFilter
   def self.silence_metadata_example_group_deprecations(); end
 end
 
+module RSpec::Core::MockingAdapters
+end
+
+module RSpec::Core::MockingAdapters::RSpec
+  include ::RSpec::Mocks::ExampleMethods
+  include ::RSpec::Mocks::ArgumentMatchers
+  include ::RSpec::Mocks::ExampleMethods::ExpectHost
+  def setup_mocks_for_rspec(); end
+
+  def teardown_mocks_for_rspec(); end
+
+  def verify_mocks_for_rspec(); end
+end
+
+module RSpec::Core::MockingAdapters::RSpec
+  def self.configuration(); end
+
+  def self.framework_name(); end
+end
+
+module RSpec::Core::MockingAdapters
+end
+
 class RSpec::Core::MultipleExceptionError
   include ::RSpec::Core::MultipleExceptionError::InterfaceTag
   def aggregation_block_label(); end
@@ -40259,6 +41575,7 @@ class RSpec::Expectations::LegacyMatcherAdapter
 end
 
 class RSpec::Expectations::MultipleExpectationsNotMetError
+  include ::RSpec::Core::MultipleExceptionError::InterfaceTag
   def aggregation_block_label(); end
 
   def aggregation_metadata(); end
@@ -41868,122 +43185,6 @@ module RSpec::Mocks::ArgumentMatchers
   def kind_of(klass); end
 
   def no_args(); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::AnyArgMatcher
-  def ===(_other); end
-
-  def description(); end
-  INSTANCE = ::T.let(nil, ::T.untyped)
-end
-
-class RSpec::Mocks::ArgumentMatchers::AnyArgMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::AnyArgsMatcher
-  def description(); end
-  INSTANCE = ::T.let(nil, ::T.untyped)
-end
-
-class RSpec::Mocks::ArgumentMatchers::AnyArgsMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::ArrayIncludingMatcher
-  def ===(actual); end
-
-  def description(); end
-
-  def initialize(expected); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::ArrayIncludingMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::BaseHashMatcher
-  def ===(predicate, actual); end
-
-  def description(name); end
-
-  def initialize(expected); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::BaseHashMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::BooleanMatcher
-  def ===(value); end
-
-  def description(); end
-  INSTANCE = ::T.let(nil, ::T.untyped)
-end
-
-class RSpec::Mocks::ArgumentMatchers::BooleanMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::DuckTypeMatcher
-  def ===(value); end
-
-  def description(); end
-
-  def initialize(*methods_to_respond_to); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::DuckTypeMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::HashExcludingMatcher
-  def ===(actual); end
-
-  def description(); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::HashExcludingMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::HashIncludingMatcher
-  def ===(actual); end
-
-  def description(); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::HashIncludingMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::InstanceOf
-  def ===(actual); end
-
-  def description(); end
-
-  def initialize(klass); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::InstanceOf
-end
-
-class RSpec::Mocks::ArgumentMatchers::KindOf
-  def ===(actual); end
-
-  def description(); end
-
-  def initialize(klass); end
-end
-
-class RSpec::Mocks::ArgumentMatchers::KindOf
-end
-
-class RSpec::Mocks::ArgumentMatchers::NoArgsMatcher
-  def description(); end
-  INSTANCE = ::T.let(nil, ::T.untyped)
-end
-
-class RSpec::Mocks::ArgumentMatchers::NoArgsMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::SingletonMatcher
-end
-
-class RSpec::Mocks::ArgumentMatchers::SingletonMatcher
-  def self.inherited(subklass); end
 end
 
 module RSpec::Mocks::ArgumentMatchers
@@ -45110,8 +46311,108 @@ module Rails
   def self.public_path(); end
 end
 
+module Rake
+  EARLY = ::T.let(nil, ::T.untyped)
+  EMPTY_TASK_ARGS = ::T.let(nil, ::T.untyped)
+  LATE = ::T.let(nil, ::T.untyped)
+  VERSION = ::T.let(nil, ::T.untyped)
+end
+
+class Rake::Application
+  def orig_display_error_messsage(ex); end
+  DEFAULT_RAKEFILES = ::T.let(nil, ::T.untyped)
+end
+
+module Rake::Backtrace
+  SUPPRESSED_PATHS = ::T.let(nil, ::T.untyped)
+  SUPPRESSED_PATHS_RE = ::T.let(nil, ::T.untyped)
+  SUPPRESS_PATTERN = ::T.let(nil, ::T.untyped)
+  SYS_KEYS = ::T.let(nil, ::T.untyped)
+  SYS_PATHS = ::T.let(nil, ::T.untyped)
+end
+
 module Rake::DSL
   include ::FileUtils::StreamUtils_
+end
+
+class Rake::FileList
+  def compact_blank(*args, &block); end
+
+  def compact_blank!(*args, &block); end
+
+  def deconstruct(*args, &block); end
+
+  def exclude?(*args, &block); end
+
+  def excluding(*args, &block); end
+
+  def extract!(*args, &block); end
+
+  def extract_options!(*args, &block); end
+
+  def fifth(*args, &block); end
+
+  def filter_map(*args, &block); end
+
+  def forty_two(*args, &block); end
+
+  def fourth(*args, &block); end
+
+  def from(*args, &block); end
+
+  def in_groups(*args, &block); end
+
+  def in_groups_of(*args, &block); end
+
+  def including(*args, &block); end
+
+  def index_by(*args, &block); end
+
+  def index_with(*args, &block); end
+
+  def inquiry(*args, &block); end
+
+  def intersection(*args, &block); end
+
+  def many?(*args, &block); end
+
+  def pick(*args, &block); end
+
+  def pluck(*args, &block); end
+
+  def second(*args, &block); end
+
+  def second_to_last(*args, &block); end
+
+  def split(*args, &block); end
+
+  def tally(*args, &block); end
+
+  def third(*args, &block); end
+
+  def third_to_last(*args, &block); end
+
+  def to(*args, &block); end
+
+  def to_default_s(*args, &block); end
+
+  def to_formatted_s(*args, &block); end
+
+  def to_msgpack(*args, &block); end
+
+  def to_sentence(*args, &block); end
+
+  def to_xml(*args, &block); end
+
+  def without(*args, &block); end
+  ARRAY_METHODS = ::T.let(nil, ::T.untyped)
+  DEFAULT_IGNORE_PATTERNS = ::T.let(nil, ::T.untyped)
+  DEFAULT_IGNORE_PROCS = ::T.let(nil, ::T.untyped)
+  DELEGATING_METHODS = ::T.let(nil, ::T.untyped)
+  GLOB_PATTERN = ::T.let(nil, ::T.untyped)
+  MUST_DEFINE = ::T.let(nil, ::T.untyped)
+  MUST_NOT_DEFINE = ::T.let(nil, ::T.untyped)
+  SPECIAL_RETURN = ::T.let(nil, ::T.untyped)
 end
 
 module Rake::FileUtilsExt
@@ -45123,9 +46424,41 @@ module Rake::FileUtilsExt
   extend ::FileUtils::StreamUtils_
 end
 
+class Rake::InvocationChain
+  EMPTY = ::T.let(nil, ::T.untyped)
+end
+
+class Rake::LinkedList
+  EMPTY = ::T.let(nil, ::T.untyped)
+end
+
+class Rake::Promise
+  NOT_SET = ::T.let(nil, ::T.untyped)
+end
+
+Rake::RDocTask = RDoc::Task
+
+class Rake::Scope
+  EMPTY = ::T.let(nil, ::T.untyped)
+end
+
 class Rake::TaskLib
   include ::FileUtils::StreamUtils_
 end
+
+module Rake::Version
+  BUILD = ::T.let(nil, ::T.untyped)
+  MAJOR = ::T.let(nil, ::T.untyped)
+  MINOR = ::T.let(nil, ::T.untyped)
+  NUMBERS = ::T.let(nil, ::T.untyped)
+  OTHER = ::T.let(nil, ::T.untyped)
+end
+
+module Rake
+  extend ::FileUtils::StreamUtils_
+end
+
+RakeFileUtils = Rake::FileUtilsExt
 
 class Random
   def self.bytes(_); end
@@ -45157,6 +46490,68 @@ end
 
 module Readline
   def self.completion_quote_character(); end
+end
+
+class Recipe
+  include ::Recipe::GeneratedAttributeMethods
+  include ::Recipe::GeneratedAssociationMethods
+  def autosave_associated_records_for_user(*args); end
+  RelationType = ::T.let(nil, ::T.untyped)
+end
+
+class Recipe::ActiveRecord_AssociationRelation
+  include ::ActiveRecord::Delegation::ClassSpecificRelation
+  include ::Recipe::GeneratedRelationMethods
+end
+
+class Recipe::ActiveRecord_AssociationRelation
+end
+
+class Recipe::ActiveRecord_Associations_CollectionProxy
+  include ::ActiveRecord::Delegation::ClassSpecificRelation
+  include ::Recipe::GeneratedRelationMethods
+end
+
+class Recipe::ActiveRecord_Associations_CollectionProxy
+end
+
+class Recipe::ActiveRecord_Relation
+  include ::ActiveRecord::Delegation::ClassSpecificRelation
+  include ::Recipe::GeneratedRelationMethods
+end
+
+class Recipe::ActiveRecord_Relation
+end
+
+module Recipe::GeneratedAssociationMethods
+  def build_user(*args, &block); end
+
+  def create_user(*args, &block); end
+
+  def create_user!(*args, &block); end
+
+  def reload_user(); end
+
+  def user(); end
+
+  def user=(value); end
+end
+
+module Recipe::GeneratedAssociationMethods
+end
+
+module Recipe::GeneratedAttributeMethods
+end
+
+module Recipe::GeneratedAttributeMethods
+  extend ::Mutex_m
+end
+
+module Recipe::GeneratedRelationMethods
+end
+
+module Recipe::GeneratedRelationMethods
+  extend ::Mutex_m
 end
 
 class Regexp
@@ -46875,6 +48270,1367 @@ module SemanticRange
   XRANGEPLAINLOOSE = ::T.let(nil, ::T.untyped)
 end
 
+module Sentry
+  LOGGER_PROGNAME = ::T.let(nil, ::T.untyped)
+  META = ::T.let(nil, ::T.untyped)
+  THREAD_LOCAL = ::T.let(nil, ::T.untyped)
+  VERSION = ::T.let(nil, ::T.untyped)
+end
+
+module Sentry::ArgumentCheckingHelper
+end
+
+module Sentry::ArgumentCheckingHelper
+end
+
+class Sentry::BackgroundWorker
+  def initialize(configuration); end
+
+  def max_queue(); end
+
+  def number_of_threads(); end
+
+  def perform(&block); end
+end
+
+class Sentry::BackgroundWorker
+end
+
+class Sentry::Backtrace
+  def ==(other); end
+
+  def initialize(lines); end
+
+  def lines(); end
+  APP_DIRS_PATTERN = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Backtrace::Line
+  def ==(other); end
+
+  def file(); end
+
+  def in_app(); end
+
+  def in_app_pattern(); end
+
+  def initialize(file, number, method, module_name, in_app_pattern); end
+
+  def method(); end
+
+  def module_name(); end
+
+  def number(); end
+  JAVA_INPUT_FORMAT = ::T.let(nil, ::T.untyped)
+  RB_EXTENSION = ::T.let(nil, ::T.untyped)
+  RUBY_INPUT_FORMAT = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Backtrace::Line
+  def self.parse(unparsed_line, in_app_pattern); end
+end
+
+class Sentry::Backtrace
+  def self.parse(backtrace, project_root, app_dirs_pattern, &backtrace_cleanup_callback); end
+end
+
+class Sentry::Breadcrumb
+  def category(); end
+
+  def category=(category); end
+
+  def data(); end
+
+  def data=(data); end
+
+  def initialize(category: T.unsafe(nil), data: T.unsafe(nil), message: T.unsafe(nil), timestamp: T.unsafe(nil), level: T.unsafe(nil), type: T.unsafe(nil)); end
+
+  def level(); end
+
+  def level=(level); end
+
+  def message(); end
+
+  def message=(message); end
+
+  def timestamp(); end
+
+  def timestamp=(timestamp); end
+
+  def to_hash(); end
+
+  def type(); end
+
+  def type=(type); end
+  DATA_SERIALIZATION_ERROR_MESSAGE = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Breadcrumb
+end
+
+class Sentry::BreadcrumbBuffer
+  include ::Enumerable
+  def buffer(); end
+
+  def buffer=(buffer); end
+
+  def each(&block); end
+
+  def empty?(); end
+
+  def initialize(size=T.unsafe(nil)); end
+
+  def members(); end
+
+  def peek(); end
+
+  def record(crumb); end
+
+  def to_hash(); end
+  DEFAULT_SIZE = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::BreadcrumbBuffer
+end
+
+class Sentry::Client
+  def capture_event(event, scope, hint=T.unsafe(nil)); end
+
+  def configuration(); end
+
+  def event_from_exception(exception, hint=T.unsafe(nil)); end
+
+  def event_from_message(message, hint=T.unsafe(nil)); end
+
+  def event_from_transaction(transaction); end
+
+  def initialize(configuration); end
+
+  def logger(); end
+
+  def send_event(event, hint=T.unsafe(nil)); end
+
+  def transport(); end
+end
+
+class Sentry::Client
+end
+
+class Sentry::Configuration
+  def app_dirs_pattern(); end
+
+  def app_dirs_pattern=(app_dirs_pattern); end
+
+  def async(); end
+
+  def async=(value); end
+
+  def background_worker_threads(); end
+
+  def background_worker_threads=(background_worker_threads); end
+
+  def backtrace_cleanup_callback(); end
+
+  def backtrace_cleanup_callback=(backtrace_cleanup_callback); end
+
+  def before_breadcrumb(); end
+
+  def before_breadcrumb=(value); end
+
+  def before_send(); end
+
+  def before_send=(value); end
+
+  def breadcrumbs_logger(); end
+
+  def breadcrumbs_logger=(logger); end
+
+  def context_lines(); end
+
+  def context_lines=(context_lines); end
+
+  def dsn(); end
+
+  def dsn=(value); end
+
+  def enabled_environments(); end
+
+  def enabled_environments=(enabled_environments); end
+
+  def enabled_in_current_env?(); end
+
+  def environment(); end
+
+  def environment=(environment); end
+
+  def error_messages(); end
+
+  def errors(); end
+
+  def exception_class_allowed?(exc); end
+
+  def exclude_loggers(); end
+
+  def exclude_loggers=(exclude_loggers); end
+
+  def excluded_exceptions(); end
+
+  def excluded_exceptions=(excluded_exceptions); end
+
+  def gem_specs(); end
+
+  def inspect_exception_causes_for_exclusion(); end
+
+  def inspect_exception_causes_for_exclusion=(inspect_exception_causes_for_exclusion); end
+
+  def inspect_exception_causes_for_exclusion?(); end
+
+  def linecache(); end
+
+  def linecache=(linecache); end
+
+  def logger(); end
+
+  def logger=(logger); end
+
+  def max_breadcrumbs(); end
+
+  def max_breadcrumbs=(max_breadcrumbs); end
+
+  def project_root(); end
+
+  def project_root=(root_dir); end
+
+  def rack_env_whitelist(); end
+
+  def rack_env_whitelist=(rack_env_whitelist); end
+
+  def rails(); end
+
+  def release(); end
+
+  def release=(release); end
+
+  def sample_rate(); end
+
+  def sample_rate=(sample_rate); end
+
+  def send_default_pii(); end
+
+  def send_default_pii=(send_default_pii); end
+
+  def send_modules(); end
+
+  def send_modules=(send_modules); end
+
+  def sending_allowed?(); end
+
+  def server=(value); end
+
+  def server_name(); end
+
+  def server_name=(server_name); end
+
+  def stacktrace_builder(); end
+
+  def traces_sample_rate(); end
+
+  def traces_sample_rate=(traces_sample_rate); end
+
+  def traces_sampler(); end
+
+  def traces_sampler=(traces_sampler); end
+
+  def tracing_enabled?(); end
+
+  def transport(); end
+
+  def trusted_proxies(); end
+
+  def trusted_proxies=(trusted_proxies); end
+  AVAILABLE_BREADCRUMBS_LOGGERS = ::T.let(nil, ::T.untyped)
+  HEROKU_DYNO_METADATA_MESSAGE = ::T.let(nil, ::T.untyped)
+  IGNORE_DEFAULT = ::T.let(nil, ::T.untyped)
+  LOG_PREFIX = ::T.let(nil, ::T.untyped)
+  MODULE_SEPARATOR = ::T.let(nil, ::T.untyped)
+  RACK_ENV_WHITELIST_DEFAULT = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Configuration
+  def self.add_post_initialization_callback(&block); end
+
+  def self.post_initialization_callbacks(); end
+end
+
+class Sentry::DSN
+  def envelope_endpoint(); end
+
+  def host(); end
+
+  def initialize(dsn_string); end
+
+  def path(); end
+
+  def port(); end
+
+  def project_id(); end
+
+  def public_key(); end
+
+  def scheme(); end
+
+  def secret_key(); end
+
+  def server(); end
+
+  def valid?(); end
+  PORT_MAP = ::T.let(nil, ::T.untyped)
+  REQUIRED_ATTRIBUTES = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::DSN
+end
+
+class Sentry::DummyTransport
+  def events(); end
+
+  def events=(events); end
+
+  def initialize(*_); end
+end
+
+class Sentry::DummyTransport
+end
+
+class Sentry::Engine
+end
+
+class Sentry::Engine
+end
+
+class Sentry::Error
+end
+
+class Sentry::Error
+end
+
+class Sentry::Event
+  def add_exception_interface(exception); end
+
+  def add_request_interface(env); end
+
+  def add_threads_interface(backtrace: T.unsafe(nil), **options); end
+
+  def backtrace(); end
+
+  def backtrace=(backtrace); end
+
+  def breadcrumbs(); end
+
+  def breadcrumbs=(breadcrumbs); end
+
+  def configuration(); end
+
+  def contexts(); end
+
+  def contexts=(contexts); end
+
+  def environment(); end
+
+  def environment=(environment); end
+
+  def event_id(); end
+
+  def event_id=(event_id); end
+
+  def exception(); end
+
+  def extra(); end
+
+  def extra=(extra); end
+
+  def fingerprint(); end
+
+  def fingerprint=(fingerprint); end
+
+  def initialize(configuration:, integration_meta: T.unsafe(nil), message: T.unsafe(nil)); end
+
+  def level(); end
+
+  def level=(new_level); end
+
+  def message(); end
+
+  def message=(message); end
+
+  def modules(); end
+
+  def modules=(modules); end
+
+  def platform(); end
+
+  def platform=(platform); end
+
+  def rack_env=(env); end
+
+  def release(); end
+
+  def release=(release); end
+
+  def request(); end
+
+  def sdk(); end
+
+  def sdk=(sdk); end
+
+  def server_name(); end
+
+  def server_name=(server_name); end
+
+  def tags(); end
+
+  def tags=(tags); end
+
+  def threads(); end
+
+  def timestamp(); end
+
+  def timestamp=(time); end
+
+  def to_hash(); end
+
+  def to_json_compatible(); end
+
+  def transaction(); end
+
+  def transaction=(transaction); end
+
+  def type(); end
+
+  def type=(type); end
+
+  def user(); end
+
+  def user=(user); end
+  ATTRIBUTES = ::T.let(nil, ::T.untyped)
+  MAX_MESSAGE_SIZE_IN_BYTES = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Event
+  def self.get_log_message(event_hash); end
+
+  def self.get_message_from_exception(event_hash); end
+end
+
+class Sentry::ExceptionInterface
+  def initialize(values:); end
+end
+
+class Sentry::ExceptionInterface
+  def self.build(exception:, stacktrace_builder:); end
+end
+
+class Sentry::ExternalError
+end
+
+class Sentry::ExternalError
+end
+
+class Sentry::HTTPTransport
+  def adapter(); end
+
+  def conn(); end
+
+  def initialize(*args); end
+
+  def send_data(data); end
+  CONTENT_TYPE = ::T.let(nil, ::T.untyped)
+  GZIP_ENCODING = ::T.let(nil, ::T.untyped)
+  GZIP_THRESHOLD = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::HTTPTransport
+end
+
+class Sentry::Hub
+  include ::Sentry::ArgumentCheckingHelper
+  def add_breadcrumb(breadcrumb, hint: T.unsafe(nil)); end
+
+  def bind_client(client); end
+
+  def capture_event(event, **options, &block); end
+
+  def capture_exception(exception, **options, &block); end
+
+  def capture_message(message, **options, &block); end
+
+  def clone(); end
+
+  def configure_scope(&block); end
+
+  def current_client(); end
+
+  def current_scope(); end
+
+  def initialize(client, scope); end
+
+  def last_event_id(); end
+
+  def new_from_top(); end
+
+  def pop_scope(); end
+
+  def push_scope(); end
+
+  def start_transaction(transaction: T.unsafe(nil), configuration: T.unsafe(nil), custom_sampling_context: T.unsafe(nil), **options); end
+
+  def with_scope(&block); end
+end
+
+class Sentry::Hub::Layer
+  def client(); end
+
+  def client=(client); end
+
+  def initialize(client, scope); end
+
+  def scope(); end
+end
+
+class Sentry::Hub::Layer
+end
+
+class Sentry::Hub
+end
+
+module Sentry::Integrable
+  def capture_exception(exception, **options, &block); end
+
+  def capture_message(message, **options, &block); end
+
+  def integration_name(); end
+
+  def register_integration(name:, version:); end
+end
+
+module Sentry::Integrable
+end
+
+class Sentry::Interface
+  def to_hash(); end
+end
+
+class Sentry::Interface
+  def self.inherited(klass); end
+
+  def self.registered(); end
+end
+
+class Sentry::LineCache
+  def get_file_context(filename, lineno, context); end
+end
+
+class Sentry::LineCache
+end
+
+class Sentry::Logger
+  def initialize(*_); end
+  LOG_PREFIX = ::T.let(nil, ::T.untyped)
+  PROGNAME = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Logger
+end
+
+module Sentry::Rack
+end
+
+class Sentry::Rack::CaptureException
+end
+
+class Sentry::Rack::CaptureException
+end
+
+class Sentry::Rack::CaptureExceptions
+  def call(env); end
+
+  def initialize(app); end
+end
+
+class Sentry::Rack::CaptureExceptions
+end
+
+class Sentry::Rack::DeprecatedMiddleware
+  def initialize(_); end
+end
+
+class Sentry::Rack::DeprecatedMiddleware
+end
+
+class Sentry::Rack::Tracing
+end
+
+class Sentry::Rack::Tracing
+end
+
+module Sentry::Rack
+end
+
+module Sentry::Rails
+  IGNORE_DEFAULT = ::T.let(nil, ::T.untyped)
+  VERSION = ::T.let(nil, ::T.untyped)
+end
+
+module Sentry::Rails::ActiveJobExtensions
+  def already_supported_by_specific_integration?(job); end
+
+  def capture_and_reraise_with_sentry(job, scope, block); end
+
+  def finish_transaction(transaction, status); end
+
+  def sentry_context(job); end
+end
+
+module Sentry::Rails::ActiveJobExtensions
+  def self.included(base); end
+end
+
+class Sentry::Rails::BacktraceCleaner
+  APP_DIRS_PATTERN = ::T.let(nil, ::T.untyped)
+  RENDER_TEMPLATE_PATTERN = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Rails::BacktraceCleaner
+end
+
+module Sentry::Rails::Breadcrumb
+end
+
+module Sentry::Rails::Breadcrumb::ActiveSupportLogger
+end
+
+module Sentry::Rails::Breadcrumb::ActiveSupportLogger
+  def self.add(name, started, _finished, _unique_id, data); end
+
+  def self.cleanup_data(data); end
+
+  def self.detach(); end
+
+  def self.inject(); end
+end
+
+module Sentry::Rails::Breadcrumb
+end
+
+class Sentry::Rails::CaptureExceptions
+end
+
+class Sentry::Rails::CaptureExceptions
+end
+
+class Sentry::Rails::Configuration
+  def report_rescued_exceptions(); end
+
+  def report_rescued_exceptions=(report_rescued_exceptions); end
+
+  def skippable_job_adapters(); end
+
+  def skippable_job_adapters=(skippable_job_adapters); end
+end
+
+class Sentry::Rails::Configuration
+end
+
+module Sentry::Rails::ControllerMethods
+  def capture_exception(exception, options=T.unsafe(nil)); end
+
+  def capture_message(message, options=T.unsafe(nil)); end
+end
+
+module Sentry::Rails::ControllerMethods
+end
+
+module Sentry::Rails::ControllerTransaction
+end
+
+module Sentry::Rails::ControllerTransaction
+  def self.included(base); end
+end
+
+module Sentry::Rails::Overrides
+end
+
+module Sentry::Rails::Overrides::FileHandler
+  def serve(*args); end
+end
+
+module Sentry::Rails::Overrides::FileHandler
+end
+
+module Sentry::Rails::Overrides::OldStreamingReporter
+  def log_error_with_raven(exception); end
+end
+
+module Sentry::Rails::Overrides::OldStreamingReporter
+  def self.included(base); end
+end
+
+module Sentry::Rails::Overrides::StreamingReporter
+  def log_error(exception); end
+end
+
+module Sentry::Rails::Overrides::StreamingReporter
+end
+
+module Sentry::Rails::Overrides
+end
+
+class Sentry::Rails::RescuedExceptionInterceptor
+  def call(env); end
+
+  def initialize(app); end
+end
+
+class Sentry::Rails::RescuedExceptionInterceptor
+end
+
+module Sentry::Rails::Tracing
+  AVAILABLE_SUBSCRIBERS = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Rails::Tracing::AbstractSubscriber
+end
+
+class Sentry::Rails::Tracing::AbstractSubscriber
+  def self.record_on_current_span(duration:, **options); end
+
+  def self.subscribe!(); end
+
+  def self.subscribe_to_event(event_name); end
+
+  def self.unsubscribe!(); end
+end
+
+class Sentry::Rails::Tracing::ActionControllerSubscriber
+  EVENT_NAME = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Rails::Tracing::ActionControllerSubscriber
+end
+
+class Sentry::Rails::Tracing::ActionViewSubscriber
+  EVENT_NAME = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Rails::Tracing::ActionViewSubscriber
+end
+
+class Sentry::Rails::Tracing::ActiveRecordSubscriber
+  EVENT_NAME = ::T.let(nil, ::T.untyped)
+  EXCLUDED_EVENTS = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Rails::Tracing::ActiveRecordSubscriber
+end
+
+module Sentry::Rails::Tracing::SentryNotificationExtension
+  def instrument(name, payload=T.unsafe(nil), &block); end
+end
+
+module Sentry::Rails::Tracing::SentryNotificationExtension
+end
+
+module Sentry::Rails::Tracing
+  def self.get_current_transaction(); end
+
+  def self.patch_active_support_notifications(); end
+
+  def self.remove_active_support_notifications_patch(); end
+
+  def self.subscribe_tracing_events(); end
+
+  def self.unsubscribe_tracing_events(); end
+end
+
+module Sentry::Rails
+  extend ::Sentry::Integrable
+end
+
+class Sentry::Railtie
+  def activate_tracing(); end
+
+  def configure_project_root(); end
+
+  def configure_trusted_proxies(); end
+
+  def extend_active_job(); end
+
+  def extend_controller_methods(); end
+
+  def inject_breadcrumbs_logger(); end
+
+  def override_file_handler(); end
+
+  def override_streaming_reporter(); end
+
+  def patch_background_worker(); end
+
+  def setup_backtrace_cleanup_callback(); end
+end
+
+class Sentry::Railtie
+end
+
+class Sentry::RequestInterface
+  def cookies(); end
+
+  def cookies=(cookies); end
+
+  def data(); end
+
+  def data=(data); end
+
+  def env(); end
+
+  def env=(env); end
+
+  def headers(); end
+
+  def headers=(headers); end
+
+  def initialize(request:); end
+
+  def method(); end
+
+  def method=(method); end
+
+  def query_string(); end
+
+  def query_string=(query_string); end
+
+  def url(); end
+
+  def url=(url); end
+  CONTENT_HEADERS = ::T.let(nil, ::T.untyped)
+  IP_HEADERS = ::T.let(nil, ::T.untyped)
+  MAX_BODY_LIMIT = ::T.let(nil, ::T.untyped)
+  REQUEST_ID_HEADERS = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::RequestInterface
+  def self.build(env:); end
+
+  def self.clean_env(env); end
+end
+
+class Sentry::Scope
+  include ::Sentry::ArgumentCheckingHelper
+  def add_breadcrumb(breadcrumb); end
+
+  def add_event_processor(&block); end
+
+  def apply_to_event(event, hint=T.unsafe(nil)); end
+
+  def breadcrumbs(); end
+
+  def breadcrumbs=(breadcrumbs); end
+
+  def clear(); end
+
+  def clear_breadcrumbs(); end
+
+  def contexts(); end
+
+  def contexts=(contexts); end
+
+  def event_processors(); end
+
+  def event_processors=(event_processors); end
+
+  def extra(); end
+
+  def extra=(extra); end
+
+  def fingerprint(); end
+
+  def fingerprint=(fingerprint); end
+
+  def get_span(); end
+
+  def get_transaction(); end
+
+  def initialize(max_breadcrumbs: T.unsafe(nil)); end
+
+  def level(); end
+
+  def level=(level); end
+
+  def rack_env(); end
+
+  def rack_env=(rack_env); end
+
+  def set_context(key, value); end
+
+  def set_contexts(contexts_hash); end
+
+  def set_extra(key, value); end
+
+  def set_extras(extras_hash); end
+
+  def set_fingerprint(fingerprint); end
+
+  def set_level(level); end
+
+  def set_rack_env(env); end
+
+  def set_span(span); end
+
+  def set_tag(key, value); end
+
+  def set_tags(tags_hash); end
+
+  def set_transaction_name(transaction_name); end
+
+  def set_user(user_hash); end
+
+  def span(); end
+
+  def span=(span); end
+
+  def tags(); end
+
+  def tags=(tags); end
+
+  def transaction_name(); end
+
+  def transaction_names(); end
+
+  def transaction_names=(transaction_names); end
+
+  def update_from_options(contexts: T.unsafe(nil), extra: T.unsafe(nil), tags: T.unsafe(nil), user: T.unsafe(nil), level: T.unsafe(nil), fingerprint: T.unsafe(nil)); end
+
+  def update_from_scope(scope); end
+
+  def user(); end
+
+  def user=(user); end
+  ATTRIBUTES = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Scope
+  def self.os_context(); end
+
+  def self.runtime_context(); end
+end
+
+class Sentry::SendEventJob
+  def perform(event, hint=T.unsafe(nil)); end
+end
+
+class Sentry::SendEventJob
+end
+
+class Sentry::SingleExceptionInterface
+  def initialize(exception:, stacktrace: T.unsafe(nil)); end
+
+  def module(); end
+
+  def stacktrace(); end
+
+  def thread_id(); end
+
+  def type(); end
+
+  def value(); end
+end
+
+class Sentry::SingleExceptionInterface
+  def self.build_with_stacktrace(exception:, stacktrace_builder:); end
+end
+
+class Sentry::Span
+  def data(); end
+
+  def description(); end
+
+  def finish(); end
+
+  def get_trace_context(); end
+
+  def initialize(description: T.unsafe(nil), op: T.unsafe(nil), status: T.unsafe(nil), trace_id: T.unsafe(nil), parent_span_id: T.unsafe(nil), sampled: T.unsafe(nil), start_timestamp: T.unsafe(nil), timestamp: T.unsafe(nil)); end
+
+  def op(); end
+
+  def parent_span_id(); end
+
+  def sampled(); end
+
+  def set_data(key, value); end
+
+  def set_description(description); end
+
+  def set_http_status(status_code); end
+
+  def set_op(op); end
+
+  def set_status(status); end
+
+  def set_tag(key, value); end
+
+  def set_timestamp(timestamp); end
+
+  def span_id(); end
+
+  def span_recorder(); end
+
+  def span_recorder=(span_recorder); end
+
+  def start_child(**options); end
+
+  def start_timestamp(); end
+
+  def status(); end
+
+  def tags(); end
+
+  def timestamp(); end
+
+  def to_hash(); end
+
+  def to_sentry_trace(); end
+
+  def trace_id(); end
+
+  def transaction(); end
+
+  def transaction=(transaction); end
+
+  def with_child_span(**options, &block); end
+  STATUS_MAP = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Span
+end
+
+class Sentry::StacktraceBuilder
+  def app_dirs_pattern(); end
+
+  def backtrace_cleanup_callback(); end
+
+  def build(backtrace:, &frame_callback); end
+
+  def context_lines(); end
+
+  def initialize(project_root:, app_dirs_pattern:, linecache:, context_lines:, backtrace_cleanup_callback: T.unsafe(nil)); end
+
+  def linecache(); end
+
+  def project_root(); end
+end
+
+class Sentry::StacktraceBuilder
+end
+
+class Sentry::StacktraceInterface
+  def frames(); end
+
+  def initialize(frames:); end
+
+  def to_hash(); end
+end
+
+class Sentry::StacktraceInterface::Frame
+  def abs_path(); end
+
+  def abs_path=(abs_path); end
+
+  def compute_filename(); end
+
+  def context_line(); end
+
+  def context_line=(context_line); end
+
+  def filename(); end
+
+  def filename=(filename); end
+
+  def function(); end
+
+  def function=(function); end
+
+  def in_app(); end
+
+  def in_app=(in_app); end
+
+  def initialize(project_root, line); end
+
+  def lineno(); end
+
+  def lineno=(lineno); end
+
+  def module(); end
+
+  def module=(_); end
+
+  def post_context(); end
+
+  def post_context=(post_context); end
+
+  def pre_context(); end
+
+  def pre_context=(pre_context); end
+
+  def set_context(linecache, context_lines); end
+
+  def to_hash(*args); end
+
+  def vars(); end
+
+  def vars=(vars); end
+end
+
+class Sentry::StacktraceInterface::Frame
+end
+
+class Sentry::StacktraceInterface
+end
+
+class Sentry::ThreadsInterface
+  def initialize(crashed: T.unsafe(nil), stacktrace: T.unsafe(nil)); end
+
+  def to_hash(); end
+end
+
+class Sentry::ThreadsInterface
+  def self.build(backtrace:, stacktrace_builder:, **options); end
+end
+
+class Sentry::Transaction
+  def finish(hub: T.unsafe(nil)); end
+
+  def init_span_recorder(limit=T.unsafe(nil)); end
+
+  def initialize(name: T.unsafe(nil), parent_sampled: T.unsafe(nil), **options); end
+
+  def name(); end
+
+  def parent_sampled(); end
+
+  def set_initial_sample_decision(sampling_context:, configuration: T.unsafe(nil)); end
+  MESSAGE_PREFIX = ::T.let(nil, ::T.untyped)
+  SENTRY_TRACE_REGEXP = ::T.let(nil, ::T.untyped)
+  UNLABELD_NAME = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Transaction::SpanRecorder
+  def add(span); end
+
+  def initialize(max_length); end
+
+  def max_length(); end
+
+  def spans(); end
+end
+
+class Sentry::Transaction::SpanRecorder
+end
+
+class Sentry::Transaction
+  def self.from_sentry_trace(sentry_trace, configuration: T.unsafe(nil), **options); end
+end
+
+class Sentry::TransactionEvent
+  def level=(level); end
+
+  def spans(); end
+
+  def spans=(spans); end
+
+  def start_timestamp(); end
+
+  def start_timestamp=(time); end
+
+  def timestamp=(timestamp); end
+  ATTRIBUTES = ::T.let(nil, ::T.untyped)
+  TYPE = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::TransactionEvent
+end
+
+class Sentry::Transport
+  def configuration(); end
+
+  def configuration=(configuration); end
+
+  def encode(event); end
+
+  def generate_auth_header(); end
+
+  def initialize(configuration); end
+
+  def send_data(data, options=T.unsafe(nil)); end
+
+  def send_event(event); end
+  PROTOCOL_VERSION = ::T.let(nil, ::T.untyped)
+  USER_AGENT = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Transport::Configuration
+  def encoding(); end
+
+  def encoding=(encoding); end
+
+  def faraday_builder(); end
+
+  def faraday_builder=(faraday_builder); end
+
+  def http_adapter(); end
+
+  def http_adapter=(http_adapter); end
+
+  def open_timeout(); end
+
+  def open_timeout=(open_timeout); end
+
+  def proxy(); end
+
+  def proxy=(proxy); end
+
+  def ssl(); end
+
+  def ssl=(ssl); end
+
+  def ssl_ca_file(); end
+
+  def ssl_ca_file=(ssl_ca_file); end
+
+  def ssl_verification(); end
+
+  def ssl_verification=(ssl_verification); end
+
+  def timeout(); end
+
+  def timeout=(timeout); end
+
+  def transport_class(); end
+
+  def transport_class=(klass); end
+end
+
+class Sentry::Transport::Configuration
+end
+
+class Sentry::Transport
+end
+
+module Sentry::Utils
+end
+
+module Sentry::Utils::ExceptionCauseChain
+end
+
+module Sentry::Utils::ExceptionCauseChain
+  def self.exception_to_array(exception); end
+end
+
+class Sentry::Utils::RealIp
+  def calculate_ip(); end
+
+  def filter_trusted_proxy_addresses(ips); end
+
+  def initialize(remote_addr: T.unsafe(nil), client_ip: T.unsafe(nil), real_ip: T.unsafe(nil), forwarded_for: T.unsafe(nil), trusted_proxies: T.unsafe(nil)); end
+
+  def ip(); end
+
+  def ips_from(header); end
+  LOCAL_ADDRESSES = ::T.let(nil, ::T.untyped)
+end
+
+class Sentry::Utils::RealIp
+end
+
+module Sentry::Utils::RequestId
+  REQUEST_ID_HEADERS = ::T.let(nil, ::T.untyped)
+end
+
+module Sentry::Utils::RequestId
+  def self.read_from(env); end
+end
+
+module Sentry::Utils
+end
+
+module Sentry
+  def self.add_breadcrumb(breadcrumb); end
+
+  def self.background_worker(); end
+
+  def self.background_worker=(background_worker); end
+
+  def self.capture_event(event); end
+
+  def self.capture_exception(exception, **options, &block); end
+
+  def self.capture_message(message, **options, &block); end
+
+  def self.clone_hub_to_current_thread(); end
+
+  def self.configuration(*args, &block); end
+
+  def self.configure_scope(&block); end
+
+  def self.get_current_client(); end
+
+  def self.get_current_hub(); end
+
+  def self.get_current_scope(); end
+
+  def self.get_main_hub(); end
+
+  def self.init(&block); end
+
+  def self.initialized?(); end
+
+  def self.integrations(); end
+
+  def self.last_event_id(); end
+
+  def self.logger(); end
+
+  def self.railtie_helpers_paths(); end
+
+  def self.railtie_namespace(); end
+
+  def self.railtie_routes_url_helpers(include_path_helpers=T.unsafe(nil)); end
+
+  def self.register_integration(name, version); end
+
+  def self.sdk_meta(); end
+
+  def self.send_event(*args, &block); end
+
+  def self.set_context(*args, &block); end
+
+  def self.set_extras(*args, &block); end
+
+  def self.set_tags(*args, &block); end
+
+  def self.set_user(*args, &block); end
+
+  def self.start_transaction(**options); end
+
+  def self.sys_command(command); end
+
+  def self.table_name_prefix(); end
+
+  def self.use_relative_model_naming?(); end
+
+  def self.utc_now(); end
+
+  def self.with_scope(&block); end
+end
+
 class Set
   def ==(other); end
 
@@ -47563,15 +50319,41 @@ end
 module UnicodeNormalize
 end
 
+class UploadIO
+  def content_type(); end
+
+  def initialize(filename_or_io, content_type, filename=T.unsafe(nil), opts=T.unsafe(nil)); end
+
+  def io(); end
+
+  def local_path(); end
+
+  def method_missing(*args); end
+
+  def opts(); end
+
+  def original_filename(); end
+
+  def respond_to?(meth, include_all=T.unsafe(nil)); end
+end
+
+class UploadIO
+  def self.convert!(io, content_type, original_filename, local_path); end
+end
+
 class User
   include ::User::GeneratedAttributeMethods
   include ::User::GeneratedAssociationMethods
   include ::Clearance::User::Validations
   include ::Clearance::User::Callbacks
   include ::Clearance::PasswordStrategies::BCrypt
+  def autosave_associated_records_for_recipes(*args); end
+
   def password(); end
 
   def password=(value); end
+
+  def validate_associated_records_for_recipes(*args); end
   RelationType = ::T.let(nil, ::T.untyped)
 end
 
@@ -47600,6 +50382,13 @@ class User::ActiveRecord_Relation
 end
 
 module User::GeneratedAssociationMethods
+  def recipe_ids(); end
+
+  def recipe_ids=(ids); end
+
+  def recipes(); end
+
+  def recipes=(value); end
 end
 
 module User::GeneratedAssociationMethods
@@ -47617,6 +50406,24 @@ end
 
 module User::GeneratedRelationMethods
   extend ::Mutex_m
+end
+
+class User
+  def self.after_add_for_recipes(); end
+
+  def self.after_add_for_recipes=(value); end
+
+  def self.after_remove_for_recipes(); end
+
+  def self.after_remove_for_recipes=(value); end
+
+  def self.before_add_for_recipes(); end
+
+  def self.before_add_for_recipes=(value); end
+
+  def self.before_remove_for_recipes(); end
+
+  def self.before_remove_for_recipes=(value); end
 end
 
 module Warning

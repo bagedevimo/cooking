@@ -27,4 +27,5 @@ RUN bundle exec rake RAILS_ENV=production DATABASE_URL=postgresql:does_not_exist
 
 EXPOSE 8080
 
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "8080", "-e", "production"]

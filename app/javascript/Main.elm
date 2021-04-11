@@ -2,7 +2,9 @@ module Main exposing (..)
 
 import Browser
 import Html exposing (Html, h1, text)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (class)
+import Browser.Navigation exposing (Key)
+import Url exposing (Url)
 
 -- MODEL
 
@@ -12,28 +14,32 @@ type alias Model =
 
 -- INIT
 
-init : (Model, Cmd Message)
-init =
+init : () -> Url -> Key -> (Model, Cmd Message)
+init flags url key =
   (Model, Cmd.none)
 
 -- VIEW
 
-view : Model -> Html Message
+view : Model -> Browser.Document Message
 view model =
-  -- The inline style is being used for example purposes in order to keep this example simple and
-  -- avoid loading additional resources. Use a proper stylesheet when building your own app.
-  h1 [style "display" "flex", style "justify-content" "center"]
+  {
+    title = "Boop",
+    body = [
+      h1 [class "title"]
      [text "Hello Elm!"]
+     ]
+     }
 
 -- MESSAGE
 
 type Message
-  = None
+  = ClickedLink Browser.UrlRequest
+  | ChangedUrl Url
 
 -- UPDATE
 
 update : Message -> Model -> (Model, Cmd Message)
-update message model =
+update msg model =
   (model, Cmd.none)
 
 -- SUBSCRIPTIONS
@@ -44,12 +50,14 @@ subscriptions model =
 
 -- MAIN
 
-main : Program (Maybe {}) Model Message
+main : Program () Model Message
 main =
-  Browser.element
+  Browser.application
     {
-      init = always init,
+      init = init,
       view = view,
       update = update,
-      subscriptions = subscriptions
+      subscriptions = subscriptions,
+      onUrlRequest = ClickedLink,
+      onUrlChange = ChangedUrl
     }

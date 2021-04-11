@@ -1,0 +1,4 @@
+simple_user:
+  email: simple@fake.com
+  encrypted_password: <%= ::BCrypt::Password.create('password') %>
+  remember_token: <%= ::BCrypt::Password.create('some_token') %>

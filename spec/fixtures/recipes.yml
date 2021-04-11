@@ -1,0 +1,5 @@
+hot_chocolate:
+  user: simple_user
+  name: "Hot Chocolate"
+  description: "A delicious hot chocolate"
+  directions: ""
